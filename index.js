@@ -6,7 +6,7 @@ const music = require("./scripts/youTubeMusicDownloader");
 const fs = require("fs")
 const path = require("path");
 const crud = require("./scripts/crud")
-const channelLink = "@expren";
+const channelLink = "@greenjobuz";
 
 const command =  {
 findSongByAudio:false
