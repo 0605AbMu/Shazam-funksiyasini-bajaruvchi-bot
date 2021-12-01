@@ -19,7 +19,13 @@ return request.post({url:'https://shazam-core.p.rapidapi.com/v1/tracks/recognize
   'x-rapidapi-key': '2b8b6c43acmsh60c9c387522ddecp1af488jsn58a7f7c73745'
 } }, function optionalCallback(err, httpResponse, body) {
   if(err) return  cb(undefined);
-  let d = JSON.parse(body);
+  //console.log(body)
+  let d;
+  if ((body.indexOf("413")==-1)){
+    if (JSON.parse(body).track==undefined) return cb(undefined);
+    d = JSON.parse(body);
+  } else{ return cb(undefined)};
+  
   let data;
   if (d.track){
   data = {

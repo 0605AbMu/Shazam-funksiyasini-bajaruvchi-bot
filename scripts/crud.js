@@ -12,16 +12,16 @@ class CRUD {
 
 
 // Read All Users Data
- readAllUser = (cb)=>{
+ readAllUser (cb){
     jfs.readFile(this.dataPath)
    .then(async res=>{
        return cb(await res);
-   }).then
+   });
 }
 
 
 // Add User By Data
- addUser = (data, cb)=>{
+ addUser(data, cb){
 this.readAllUser(res=>{
    res.push(data);
    jfs.writeFile(this.dataPath, res)
@@ -34,7 +34,7 @@ this.readAllUser(res=>{
 
 
 //Update User By Id
-updateUserById = (id, data, cb)=>{
+updateUserById (id, data, cb){
 
 this.readAllUser(res=>{
    const rt = res.findIndex(({id})=>id==id);
@@ -61,7 +61,7 @@ readUserById(idr, cb){
    })
 }
 // delete User By Id
- deleteUserById = (id, cb)=>{
+ deleteUserById(id, cb){
 this.readAllUser(res=>{
 const rt = res.findIndex(({id})=>id==id);
 const ddata = res[rt]

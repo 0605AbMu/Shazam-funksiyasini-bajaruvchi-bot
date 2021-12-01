@@ -14,18 +14,37 @@ findSongByAudio:false
 
 const processUserId = [];
 const adminID = "1179599037";
+const dMessageID = [];
 
 bot.start(msg=>{
-    msg.replyWithHTML("Assalomu alaykum. Xush kelibsiz!");
+    
+if(dMessageID.findIndex(({id})=>id==msg.message.from.id)==-1){dMessageID.push({id: msg.message.from.id, mid:[]})}
+
+    msg.replyWithHTML("Assalomu alaykum. Xush kelibsiz!").then(res=>{dMessageID.find(({id})=>id==msg.message.from.id).mid.push(res.message_id) });
+
+    
+    
     if (adminID==msg.message.from.id.toString()) msg.tg.getMyCommands().then(async res=>{
        res.push({command:"stat", description:"statistikani ko'rish"})
         msg.tg.setMyCommands(res); 
     })
      
-    msg.tg.getChatMember(channelLink, msg.message.from.id)
+ msg.tg.getChatMember(channelLink, msg.message.from.id)
     .then(async res=>{
     if (res.status=="member"||res.status=="creator"||res.status=="administrator"){
-        msg.replyWithHTML("<b>Kanalimiz a'zosi ekanligingiz tasdiqlandi.\nMarhamat botdan foydalanishingiz mumkin!</b>")
+        
+        msg.replyWithHTML(`<b>Assalomu alaykum ${msg.message.from.first_name}!\nMenga quyidagi buyruqlar orqali murojaat qiling:
+/song - musiqaning nomi bilan qidirish
+/artist - musiqaning artist nomi bilan qidirish
+/shazam - istalgan video voice audio
+lar orqali sizga kerakli musiqani topib beraman.</b>`)
+        .then((res)=>{
+            
+            dMessageID.find(({id})=>id==msg.message.from.id).mid.map(x=>{try{msg.deleteMessage(x)}catch(e){}});
+            dMessageID.splice(dMessageID.findIndex(({id})=>id==msg.message.from.id),1);
+            
+            
+        })
         crud.readUserById(msg.message.from.id, res=>{
             if (!res)
             return crud.addUser({
@@ -36,8 +55,11 @@ bot.start(msg=>{
             }, res=>{});
         })
     } else{
-            msg.replyWithHTML(`<b>⚠️Siz Botimizdan foydalanishingiz uchun quyidagi Kanalimizga OBUNA bo'lmagansiz!\nKanalimizga obuna bo'ling va /start buyrug'uni yuboring...</b>`, Extra.markup(Markup.inlineKeyboard([{text:"Kanalimiz", url:"https://t.me/"+channelLink.split("@")[1]}])))        
+        dMessageID.find(({id})=>id==msg.message.from.id).mid.push(msg.message.message_id);
+            msg.replyWithHTML(`<b>⚠️Siz Botimizdan foydalanishingiz uchun quyidagi Kanalimizga OBUNA bo'lmagansiz!\nKanalimizga obuna bo'ling va /start buyrug'uni yuboring...</b>`, Extra.markup(Markup.inlineKeyboard([{text:"Kanalimiz", url:"https://t.me/"+channelLink.split("@")[1]}])))
+            .then(res=>{ dMessageID.find(({id})=>id==msg.message.from.id).mid.push(res.message_id)});       
     }
+    
     })
 
 
@@ -45,16 +67,27 @@ bot.start(msg=>{
 
 })
 
+bot.command("song", msg=>{
+    msg.replyWithHTML("<b>Tez kunlarda ishga tushadi...</b>")
+})
+bot.command("artist", msg=>{
+    msg.replyWithHTML("<b>Tez kunlarda ishga tushadi...</b>")
+})
 
-bot.command("findsongbyaudio", msg=>{
-    if (processUserId.indexOf(msg.message.from.id)==-1){
-    msg.replyWithHTML("<b>🤖Menga 1-2 min lik multimedia jo'nating. Men undagi Musiqani topib berishga harakat qilaman!</b>");
+
+bot.command("shazam", msg=>{
+    if (processUserId.indexOf(msg.message.from.id)==-1&&processUserId.length<=5){
+        
+    msg.replyWithHTML("<b>🤖Menga 2MB dan oshmaydigan Video, Audio yoki Voice yuboring, Musiqasini topib beraman!</b>");
     command.findSongByAudio = true;
     processUserId.push(msg.message.from.id)
     } else{
+        if (processUserId.length>5) return msg.replyWithHTML("<b>Jarayondagi ishlar soni biroz ko'p. Keyinroq urunib ko'ring!</b>")
 msg.replyWithHTML("<b>Siz bergan buyruq hozir jarayonda👆. Iltimos Oxirigacha Bajarilishini kuting yoki bekor qiling...</b>")
     }
 })
+
+
 
 bot.command("help", msg=>{
     msg.replyWithHTML("<b>Botda ishlash qo'llanmasi....</b>")
@@ -92,8 +125,8 @@ crud.readUserById(msg.message.from.id, res=>{
     if (!command.findSongByAudio){msg.replyWithHTML("<b>Kerakli buyruqni tanlang!</b>"); return;}
     if (res&&res.status=="member"&&command.findSongByAudio){
         general(botToken, msg.message.from.id.toString(), file_id, (res, inf)=>{
-            if (!res) return msg.replyWithHTML("<b>⚠️Bu Musiqa Topilmadi!</b>").finally(()=>{videoSaver.removeFile(msg.chat.id)});
-            if (res=="err") return msg.replyWithHTML("<b>⚠️Faylning hajmi katta yoki resurs yetarli emas. Uni xotiraga saqlab bo'lmadi. Iltimos qaytadan urunib ko'ring</b>").finally(()=>{videoSaver.removeFile(msg.chat.id)});
+            if (!res) return msg.replyWithHTML("<b>⚠️Bu Musiqa Topilmadi.Iltimos qaytadan xarakat qilib ko'ring!</b>").finally(()=>{videoSaver.removeFile(msg.chat.id)});
+            if (res=="err") return msg.replyWithHTML("<b>⚠️Faylning hajmi 2MB dan oshmasin yoki Musiqaning biroz qismini voice orqali yozib yuboring. Iltimos qaytadan urunib ko'ring</b>").finally(()=>{videoSaver.removeFile(msg.chat.id)});
             
             msg.replyWithAudio({source:res}, Extra.caption(
                 `<b>
@@ -103,7 +136,7 @@ crud.readUserById(msg.message.from.id, res=>{
 ▪️Musiqa nomi: <i>${inf.subject}</i>;
 🔸Musiqa Janri: <i>${inf.genres}</i>;
 🔗Musiqa uchun link: <i>${inf.link}</i>;
-Yaqinlaringizga ulashing: <i>[shareLink]</i>
+Yaqinlaringizga ulashing: <i>@${msg.botInfo.username}</i>
 </b>
                 `
             ).HTML(true) ).finally(()=>{videoSaver.removeFile(msg.chat.id)})
@@ -142,7 +175,7 @@ function general(botToken, userId, fileId, cb){
     })
     
     .then(res=>{
-        if (fs.statSync(res).size/1000/1000>7) return cb("err");
+        if (fs.statSync(res).size/1000/1000>2) return cb("err");
         
         
     music(res, userId, (res, inf)=>{
