@@ -1,4 +1,4 @@
-const botToken = "1286410494:AAF6YLre5UKA1NjZkOulFVVPVhzF7PcSfO8";
+const botToken = "2140507423:AAEdxki1Xf0kBXvGLaDQhsa0z7vLIckU9J8";
 const {Telegraf, Extra, Markup} = require("telegraf");
 const bot = new Telegraf(botToken);
 const videoSaver  = require("./scripts/videoSaver");
