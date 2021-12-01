@@ -28,7 +28,6 @@
     "nodemon": "^2.0.15",
     "postman-request": "^2.88.1-postman.30",
     "telegraf": "^3.38.0",
-    "tiktok-downloader": "github:jsam6/tiktok-downloader",
     "tiktok-downloader-nowm": "^1.0.0",
     "tiktok-scraper": "^1.4.36",
     "unirest": "^0.6.0",
