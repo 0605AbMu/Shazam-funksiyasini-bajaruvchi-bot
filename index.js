@@ -13,7 +13,7 @@ findSongByAudio:false
 }
 
 const processUserId = [];
-const adminID = "1179599037";
+const adminID = "1607198337
 const dMessageID = [];
 
 bot.start(msg=>{
