@@ -76,15 +76,46 @@ bot.command("artist", msg=>{
 
 
 bot.command("shazam", msg=>{
-    if (processUserId.indexOf(msg.message.from.id)==-1&&processUserId.length<=5){
+    msg.tg.getChatMember(channelLink, msg.message.from.id)
+    .then(async res=>{
         
-    msg.replyWithHTML("<b>🤖Menga 2MB dan oshmaydigan Video, Audio yoki Voice yuboring, Musiqasini topib beraman!</b>");
-    command.findSongByAudio = true;
-    processUserId.push(msg.message.from.id)
+    if (res.status=="member"||res.status=="creator"||res.status=="administrator"){
+        if (dMessageID.find(({id})=>id==msg.message.from.id)) {
+            dMessageID.find(({id})=>id==msg.message.from.id).mid.map(x=>{try{msg.deleteMessage(x)}catch(e){}});
+            dMessageID.splice(dMessageID.findIndex(({id})=>id==msg.message.from.id),1);
+         
+        }
+         
+
+        // if (processUserId.indexOf(msg.message.from.id)==-1&&processUserId.length<=5){
+        
+            msg.replyWithHTML("<b>🤖Menga 2MB dan oshmaydigan Video, Audio yoki Voice yuboring, Musiqasini topib beraman!</b>");
+            command.findSongByAudio = true;
+            processUserId.push(msg.message.from.id)
+        //     } else{
+        //         if (processUserId.length>5) return msg.replyWithHTML("<b>Jarayondagi ishlar soni biroz ko'p. Keyinroq urunib ko'ring!</b>")
+        // msg.replyWithHTML("<b>Siz bergan buyruq hozir jarayonda👆. Iltimos Oxirigacha Bajarilishini kuting yoki bekor qiling...</b>")
+        //     }
     } else{
-        if (processUserId.length>5) return msg.replyWithHTML("<b>Jarayondagi ishlar soni biroz ko'p. Keyinroq urunib ko'ring!</b>")
-msg.replyWithHTML("<b>Siz bergan buyruq hozir jarayonda👆. Iltimos Oxirigacha Bajarilishini kuting yoki bekor qiling...</b>")
+        //dMessageID.find(({id})=>id==msg.message.from.id).mid.push(msg.message.message_id);
+        msg.replyWithHTML(`<b>⚠️Siz Botimizdan foydalanishingiz uchun quyidagi Kanalimizga OBUNA bo'lmagansiz!\nKanalimizga obuna bo'ling va /start buyrug'uni yuboring...</b>`, Extra.markup(Markup.inlineKeyboard([{text:"Kanalimiz", url:"https://t.me/"+channelLink.split("@")[1]}])))
+        .then(res=>{ 
+           try {
+            if (!dMessageID.find(({id})=>id==msg.message.from.id)) {dMessageID.push({id: msg.message.from.id, mid:[]})}
+            dMessageID.find(({id})=>id==msg.message.from.id).mid.push(res.message_id)
+           } catch (error) {
+               
+           }
+           
+    
+    });
+
     }
+});
+
+
+
+   
 })
 
 
@@ -125,8 +156,8 @@ crud.readUserById(msg.message.from.id, res=>{
     if (!command.findSongByAudio){msg.replyWithHTML("<b>Kerakli buyruqni tanlang!</b>"); return;}
     if (res&&res.status=="member"&&command.findSongByAudio){
         general(botToken, msg.message.from.id.toString(), file_id, (res, inf)=>{
-            if (!res) return msg.replyWithHTML("<b>⚠️Bu Musiqa Topilmadi.Iltimos qaytadan xarakat qilib ko'ring!</b>").finally(()=>{videoSaver.removeFile(msg.chat.id)});
-            if (res=="err") return msg.replyWithHTML("<b>⚠️Faylning hajmi 2MB dan oshmasin yoki Musiqaning biroz qismini voice orqali yozib yuboring. Iltimos qaytadan urunib ko'ring</b>").finally(()=>{videoSaver.removeFile(msg.chat.id)});
+            if (!res) return msg.replyWithHTML("<b>⚠️Bu Musiqa Topilmadi.Iltimos qaytadan xarakat qilib ko'ring!</b>").finally(()=>{videoSaver.removeFile(msg.chat.id); processUserId.splice(processUserId.indexOf(msg.message.from.id), 1);});
+            if (res=="err") return msg.replyWithHTML("<b>⚠️Faylning hajmi 2MB dan oshmasin yoki Musiqaning biroz qismini voice orqali yozib yuboring. Iltimos qaytadan urunib ko'ring</b>").finally(()=>{videoSaver.removeFile(msg.chat.id);processUserId.splice(processUserId.indexOf(msg.message.from.id), 1); });
             
             msg.replyWithAudio({source:res}, Extra.caption(
                 `<b>
@@ -139,7 +170,7 @@ crud.readUserById(msg.message.from.id, res=>{
 Yaqinlaringizga ulashing: <i>@${msg.botInfo.username}</i>
 </b>
                 `
-            ).HTML(true) ).finally(()=>{videoSaver.removeFile(msg.chat.id)})
+            ).HTML(true) ).finally(()=>{videoSaver.removeFile(msg.chat.id); processUserId.splice(processUserId.indexOf(msg.message.from.id), 1)});
             
         
         })
@@ -193,3 +224,15 @@ function general(botToken, userId, fileId, cb){
 
 
 bot.launch({polling:true});
+
+setInterval(() => {
+    try{
+    if (processUserId.length==0){
+        videoSaver.removeAll();
+    }    
+    }
+    catch(e){
+        
+    }
+    
+}, 600000);
