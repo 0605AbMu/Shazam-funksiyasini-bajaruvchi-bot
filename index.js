@@ -24,10 +24,15 @@ if(dMessageID.findIndex(({id})=>id==msg.message.from.id)==-1){dMessageID.push({i
 
     
     
-    if (adminID==msg.message.from.id.toString()) msg.tg.getMyCommands().then(async res=>{
-       res.push({command:"stat", description:"statistikani ko'rish"})
+    if (adminID==msg.message.from.id.toString()){ msg.tg.getMyCommands().then(async res=>{
+       res.push({command:"stat", description:"statistikani ko'rish"});
+       res.push({command:"message", description:"barchaga xabar yuborish"});
         msg.tg.setMyCommands(res); 
-    })
+    })} else{
+        msg.tg.getMyCommands().then(async res=>{
+            msg.tg.setMyCommands(res); 
+         })
+    }
      
  msg.tg.getChatMember(channelLink, msg.message.from.id)
     .then(async res=>{
@@ -121,9 +126,17 @@ bot.command("shazam", msg=>{
 
 
 bot.command("help", msg=>{
-    msg.replyWithHTML("<b>Botda ishlash qo'llanmasi....</b>")
+    msg.replyWithVideo({source:"helper.mp4"}, Extra.HTML(true).caption("<b>Botdan foydalanish qo'llanmasi to'liq videoda👆</b>"));
 })
 
+bot.command("message", msg=>{
+    if (msg.message.from.id==adminID){
+        command.message = true;
+        return msg.replyWithHTML("<b>Menga birorta xabar yuboring men uni barcha bot foydalanuvchilariga uzataman</b>")
+    } else{
+        return msg.replyWithHTML("<b>‼Siz adminstarator emassiz.</b>");
+    }
+})
 
 
 bot.command("stat", msg=>{
@@ -144,6 +157,7 @@ bot.command("stat", msg=>{
         
     })
 })
+
 
 bot.on(["video", "audio", "voice","video_note"], msg=>{
     let file_id;
@@ -194,7 +208,23 @@ Yaqinlaringizga ulashing: <i>@${msg.botInfo.username}</i>
 
 })
 
-
+bot.on("message", msg=>{
+    if(command.message){
+        crud.readAllUser(res=>{
+            res.map(x=>{
+            try {
+                msg.tg.sendCopy(x.id, msg.message,Extra.HTML(true))
+              
+            } catch (error) {
+                
+            }
+                
+            });
+            command.message = false;
+            msg.tg.sendMessage(adminID, "Xabaringiz barchaga yetkazildi!");
+        })
+    }
+})
 
 
 function general(botToken, userId, fileId, cb){
@@ -226,13 +256,7 @@ function general(botToken, userId, fileId, cb){
 bot.launch({polling:true});
 
 setInterval(() => {
-    try{
     if (processUserId.length==0){
         videoSaver.removeAll();
-    }    
     }
-    catch(e){
-        
-    }
-    
 }, 600000);
