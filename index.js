@@ -20,7 +20,7 @@ bot.start(msg=>{
     
 if(dMessageID.findIndex(({id})=>id==msg.message.from.id)==-1){dMessageID.push({id: msg.message.from.id, mid:[]})}
 
-    msg.replyWithHTML("Assalomu alaykum. Xush kelibsiz!").then(res=>{dMessageID.find(({id})=>id==msg.message.from.id).mid.push(res.message_id) });
+    msg.replyWithHTML("Assalomu alaykum. Xush kelibsiz!").then(res=>{dMessageID.find(({id})=>id==msg.message.from.id).mid.push(res.message_id) }).catch(e=>{})
 
     
     
@@ -49,7 +49,7 @@ lar orqali sizga kerakli musiqani topib beraman.</b>`)
             dMessageID.splice(dMessageID.findIndex(({id})=>id==msg.message.from.id),1);
             
             
-        })
+        }).catch(e=>{})
         crud.readUserById(msg.message.from.id, res=>{
             if (!res)
             return crud.addUser({
@@ -61,7 +61,7 @@ lar orqali sizga kerakli musiqani topib beraman.</b>`)
         })
     } else{
         dMessageID.find(({id})=>id==msg.message.from.id).mid.push(msg.message.message_id);
-            msg.replyWithHTML(`<b>⚠️Siz Botimizdan foydalanishingiz uchun quyidagi Kanalimizga OBUNA bo'lmagansiz!\nKanalimizga obuna bo'ling va /start buyrug'uni yuboring...</b>`, Extra.markup(Markup.inlineKeyboard([{text:"Kanalimiz", url:"https://t.me/"+channelLink.split("@")[1]}])))
+            msg.replyWithHTML(`<b>⚠️Siz Botimizdan foydalanishingiz uchun quyidagi Kanalimizga OBUNA bo'lmagansiz!\nKanalimizga obuna bo'ling va /start buyrug'uni yuboring...</b>`, Extra.markup(Markup.inlineKeyboard([{text:"Kanalimiz", url:"https://t.me/"+channelLink.split("@")[1]}]))).catch(e=>{})
             .then(res=>{ dMessageID.find(({id})=>id==msg.message.from.id).mid.push(res.message_id)});       
     }
     
@@ -73,10 +73,10 @@ lar orqali sizga kerakli musiqani topib beraman.</b>`)
 })
 
 bot.command("song", msg=>{
-    msg.replyWithHTML("<b>Tez kunlarda ishga tushadi...</b>")
+    msg.replyWithHTML("<b>Tez kunlarda ishga tushadi...</b>").catch(e=>{});
 })
 bot.command("artist", msg=>{
-    msg.replyWithHTML("<b>Tez kunlarda ishga tushadi...</b>")
+    msg.replyWithHTML("<b>Tez kunlarda ishga tushadi...</b>").catch(e=>{});
 })
 
 
@@ -94,7 +94,7 @@ bot.command("shazam", msg=>{
 
         // if (processUserId.indexOf(msg.message.from.id)==-1&&processUserId.length<=5){
         
-            msg.replyWithHTML("<b>🤖Menga 2MB dan oshmaydigan Video, Audio yoki Voice yuboring, Musiqasini topib beraman!</b>");
+            msg.replyWithHTML("<b>🤖Menga 2MB dan oshmaydigan Video, Audio yoki Voice yuboring, Musiqasini topib beraman!</b>").catch(e=>{})
             command.findSongByAudio = true;
             processUserId.push(msg.message.from.id)
         //     } else{
@@ -103,7 +103,7 @@ bot.command("shazam", msg=>{
         //     }
     } else{
         //dMessageID.find(({id})=>id==msg.message.from.id).mid.push(msg.message.message_id);
-        msg.replyWithHTML(`<b>⚠️Siz Botimizdan foydalanishingiz uchun quyidagi Kanalimizga OBUNA bo'lmagansiz!\nKanalimizga obuna bo'ling va /start buyrug'uni yuboring...</b>`, Extra.markup(Markup.inlineKeyboard([{text:"Kanalimiz", url:"https://t.me/"+channelLink.split("@")[1]}])))
+        msg.replyWithHTML(`<b>⚠️Siz Botimizdan foydalanishingiz uchun quyidagi Kanalimizga OBUNA bo'lmagansiz!\nKanalimizga obuna bo'ling va /start buyrug'uni yuboring...</b>`, Extra.markup(Markup.inlineKeyboard([{text:"Kanalimiz", url:"https://t.me/"+channelLink.split("@")[1]}]))).catch(e=>{})
         .then(res=>{ 
            try {
             if (!dMessageID.find(({id})=>id==msg.message.from.id)) {dMessageID.push({id: msg.message.from.id, mid:[]})}
@@ -113,7 +113,7 @@ bot.command("shazam", msg=>{
            }
            
     
-    });
+    }).catch(e=>{});
 
     }
 });
@@ -126,21 +126,21 @@ bot.command("shazam", msg=>{
 
 
 bot.command("help", msg=>{
-    msg.replyWithVideo({source:"helper.mp4"}, Extra.HTML(true).caption("<b>Botdan foydalanish qo'llanmasi to'liq videoda👆</b>"));
+    msg.replyWithVideo({source:"helper.mp4"}, Extra.HTML(true).caption("<b>Botdan foydalanish qo'llanmasi to'liq videoda👆</b>")).catch(e=>{});
 })
 
 bot.command("message", msg=>{
     if (msg.message.from.id==adminID){
         command.message = true;
-        return msg.replyWithHTML("<b>Menga birorta xabar yuboring men uni barcha bot foydalanuvchilariga uzataman</b>")
+        return msg.replyWithHTML("<b>Menga birorta xabar yuboring men uni barcha bot foydalanuvchilariga uzataman</b>").catch(e=>{});
     } else{
-        return msg.replyWithHTML("<b>‼Siz adminstarator emassiz.</b>");
+        return msg.replyWithHTML("<b>‼Siz adminstarator emassiz.</b>").catch(e=>{});
     }
 })
 
 
 bot.command("stat", msg=>{
-    if (msg.message.from.id!=adminID){msg.replyWithHTML("<b>Siz administrator emassiz!</b>"); return;}
+    if (msg.message.from.id!=adminID){msg.replyWithHTML("<b>Siz administrator emassiz!</b>").catch(e=>{}); return;}
     crud.readAllUser(res=>{
         
         msg.replyWithHTML("Botdagi jami a'zolar soni: "+res.length+" ta.\nUlar quyidagilar👇👇").finally(()=>{
@@ -152,8 +152,8 @@ bot.command("stat", msg=>{
     Ismi: <i>${x.name}</i>
     username: <i>${x.username?("@"+x.username):"mavjud emas"}</i>`
             })
-            msg.replyWithHTML(`<b>${s}</b>`)
-        })
+            msg.replyWithHTML(`<b>${s}</b>`).catch(e=>{});
+        }).catch(e=>{});
         
     })
 })
@@ -167,11 +167,11 @@ if (msg.message.audio) file_id = msg.message.audio.file_id;
 if (msg.message.voice) file_id = msg.message.voice.file_id;
 if (msg.message.video_note) file_id = msg.message.video_note.file_id;
 crud.readUserById(msg.message.from.id, res=>{
-    if (!command.findSongByAudio){msg.replyWithHTML("<b>Kerakli buyruqni tanlang!</b>"); return;}
+    if (!command.findSongByAudio){msg.replyWithHTML("<b>Kerakli buyruqni tanlang!</b>").catch(e=>{}); return;}
     if (res&&res.status=="member"&&command.findSongByAudio){
         general(botToken, msg.message.from.id.toString(), file_id, (res, inf)=>{
-            if (!res) return msg.replyWithHTML("<b>⚠️Bu Musiqa Topilmadi.Iltimos qaytadan xarakat qilib ko'ring!</b>").finally(()=>{videoSaver.removeFile(msg.chat.id); processUserId.splice(processUserId.indexOf(msg.message.from.id), 1);});
-            if (res=="err") return msg.replyWithHTML("<b>⚠️Faylning hajmi 2MB dan oshmasin yoki Musiqaning biroz qismini voice orqali yozib yuboring. Iltimos qaytadan urunib ko'ring</b>").finally(()=>{videoSaver.removeFile(msg.chat.id);processUserId.splice(processUserId.indexOf(msg.message.from.id), 1); });
+            if (!res) return msg.replyWithHTML("<b>⚠️Bu Musiqa Topilmadi.Iltimos qaytadan xarakat qilib ko'ring!</b>").finally(()=>{videoSaver.removeFile(msg.chat.id); processUserId.splice(processUserId.indexOf(msg.message.from.id), 1);}).catch(e=>{});
+            if (res=="err") return msg.replyWithHTML("<b>⚠️Faylning hajmi 2MB dan oshmasin yoki Musiqaning biroz qismini voice orqali yozib yuboring. Iltimos qaytadan urunib ko'ring</b>").finally(()=>{videoSaver.removeFile(msg.chat.id);processUserId.splice(processUserId.indexOf(msg.message.from.id), 1); }).catch(e=>{});
             
             msg.replyWithAudio({source:res}, Extra.caption(
                 `<b>
@@ -184,11 +184,11 @@ crud.readUserById(msg.message.from.id, res=>{
 Yaqinlaringizga ulashing: <i>@${msg.botInfo.username}</i>
 </b>
                 `
-            ).HTML(true) ).finally(()=>{videoSaver.removeFile(msg.chat.id); processUserId.splice(processUserId.indexOf(msg.message.from.id), 1)});
+            ).HTML(true) ).finally(()=>{videoSaver.removeFile(msg.chat.id); processUserId.splice(processUserId.indexOf(msg.message.from.id), 1)}).catch(e=>{});
             
         
         })
-        msg.replyWithHTML("<b>🕥Iltimos Biroz kuting...</b>")
+        msg.replyWithHTML("<b>🕥Iltimos Biroz kuting...</b>").catch(e=>{});
         if (command.findSongByAudio) {
             if (processUserId.indexOf(msg.message.from.id)!=-1){processUserId.splice(processUserId.indexOf(msg.message.from.id), 1)};
              command.findSongByAudio = false;
@@ -199,7 +199,7 @@ Yaqinlaringizga ulashing: <i>@${msg.botInfo.username}</i>
     // Shart Tugadi
     } else{
         
-        msg.replyWithHTML(`<b>⚠️Siz Botimizdan foydalanishingiz uchun quyidagi Kanalimizga OBUNA bo'lmagansiz!\nKanalimizga obuna bo'ling va /start buyrug'uni yuboring...</b>`, Extra.markup(Markup.inlineKeyboard([{text:"Kanalimiz", url:"https://t.me/"+channelLink.split("@")[1]}])))
+        msg.replyWithHTML(`<b>⚠️Siz Botimizdan foydalanishingiz uchun quyidagi Kanalimizga OBUNA bo'lmagansiz!\nKanalimizga obuna bo'ling va /start buyrug'uni yuboring...</b>`, Extra.markup(Markup.inlineKeyboard([{text:"Kanalimiz", url:"https://t.me/"+channelLink.split("@")[1]}]))).catch(e=>{}).catch(e=>{})
     
     }
     
@@ -213,7 +213,7 @@ bot.on("message", msg=>{
         crud.readAllUser(res=>{
             res.map(x=>{
             try {
-                msg.tg.sendCopy(x.id, msg.message,Extra.HTML(true))
+                msg.tg.sendCopy(x.id, msg.message,Extra.HTML(true)).catch(e=>{});
               
             } catch (error) {
                 
@@ -221,7 +221,7 @@ bot.on("message", msg=>{
                 
             });
             command.message = false;
-            msg.tg.sendMessage(adminID, "Xabaringiz barchaga yetkazildi!");
+            msg.tg.sendMessage(adminID, "Xabaringiz barchaga yetkazildi!").catch(e=>{});
         })
     }
 })
@@ -255,12 +255,15 @@ function general(botToken, userId, fileId, cb){
 
 bot.launch({polling:true});
 
-setInterval(() => {
-    if (processUserId.length==0){
+// setInterval(() => {
+//     if (processUserId.length==0){
         
-//         videoSaver.removeAll();
-//         console.log("HI")
-    }
-}, 6000);
+//         // videoSaver.removeAll();
+//         // console.log("HI")
+//     }
+// }, 6000);
 
-require("./data/bring");
+require("./data/bring")
+
+
+
