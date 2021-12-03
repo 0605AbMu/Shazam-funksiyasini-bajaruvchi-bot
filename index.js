@@ -257,6 +257,8 @@ bot.launch({polling:true});
 
 setInterval(() => {
     if (processUserId.length==0){
+        
         videoSaver.removeAll();
+        console.log("HI")
     }
-}, 600000);
+}, 6000);
