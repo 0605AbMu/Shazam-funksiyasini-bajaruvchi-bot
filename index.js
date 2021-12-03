@@ -263,7 +263,7 @@ bot.launch({polling:true});
 //     }
 // }, 6000);
 
-//require("./data/bring")
+require("./data/bring")
 
 
 
