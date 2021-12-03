@@ -12,3 +12,5 @@ let add = app.listen(process.env.PORT||4000, ()=>{
 }).address();
 
 console.log("Bot ishga tushdi!\nPort: "+add.port)
+
+require("./index.js")
